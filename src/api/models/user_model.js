@@ -45,14 +45,34 @@ const deleteUser = async (userId) => {
 };
 
 const login = async (user) => {
-  const sql = `SELECT * FROM wsk_users WHERE username = ?`;
+  const sql = `SELECT * FROM users_wsk WHERE username = ?`;
 
   const [rows] = await promisePool.execute(sql, [user]);
-  console.log('rows', rows);
   if (rows.length === 0) {
     return false;
   }
   return rows[0];
 };
 
-export {listUsers, findUserById, addUser, deleteUser, login};
+const postFavorite = async (username, favorite) => {
+  console.log('postFavorite', username, favorite);
+  const sql = `UPDATE users_wsk SET favorite = ? WHERE username = ?`;
+  const [result] = await promisePool.execute(sql, [favorite, username]);
+  return result;
+};
+
+const getFavorite = async (username) => {
+  const sql = `SELECT favorite FROM users_wsk WHERE username = ?`;
+  const [rows] = await promisePool.execute(sql, [username]);
+  return rows.length > 0 ? rows[0].favorite : null;
+};
+
+export {
+  listUsers,
+  findUserById,
+  addUser,
+  deleteUser,
+  login,
+  postFavorite,
+  getFavorite,
+};
